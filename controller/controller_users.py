@@ -33,10 +33,32 @@ def insert_users(tg_id, tg_num_phone, tg_nick):
     cursor = db.cursor()
     db.row_factory = sqlite3.Row
     params = (tg_id, tg_num_phone, tg_nick)
-    cursor.execute("insert into users (tg_id, tg_num_phone, tg_nick) values (?, ?, ?)"), (params,)
+    try:
+        cursor.execute("insert into users (tg_id, tg_num_phone, tg_nick) values (?, ?, ?)", params)
+    except Exception:
+        print("Ошибка при добавлении пользователя!!!")
+        return False
     db.commit()
     return True
 
-
-
-############## Обновление номера телефона пользователей ##############
+############## Обновление номера телефона у существующих пользователей ##############
+def update_users(tg_id, tg_num_phone):
+    db = get_db()
+    cursor = db.cursor()
+    db.row_factory = sqlite3.Row
+    params = (tg_num_phone, tg_id)
+    params_check = (tg_id)
+    res = cursor.execute("select count(tg_id) from users where tg_id = ?", (params_check,))
+    for row in res:
+        row_s1 = str(row).replace("(",'')
+        row_s2 = row_s1.replace(",)",'')
+        int_row = int(row_s2)
+        if int_row != 1:
+            print("Ошибка при обновление номера телефона пользователя!!!")
+            print('1',int_row)
+            return int_row
+        else:
+            cursor.execute("update users set tg_num_phone = ? where tg_id = ?", params)
+            db.commit()
+            print('2',int_row)
+            return int_row
