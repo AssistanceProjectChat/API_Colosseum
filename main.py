@@ -22,5 +22,5 @@ def after_request(respoinse):
 
 if __name__ == "__main__":
     create_tables()
-    #logging.basicConfig(filename='api_book.log', encoding='utf-8', level=logging.INFO)
+    logging.basicConfig(filename='api_book.log', encoding='utf-8', level=logging.INFO)
     app.run(host='192.168.146.186', port=7061, debug=True)
