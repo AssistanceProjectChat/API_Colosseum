@@ -9,30 +9,31 @@ def create_tables():
     tables_users = [
         """     create table users (
                 user_id integer primary key autoincrement,
-                tg_id text unique,
-                tg_num_phone text unique,
-                tg_nick text
+                tg_id text unique NOT NULL,
+                tg_num_phone text unique NOT NULL,
+                tg_nick text,
+                tg_chat_id TEXT UNIQUE NOT NULL
                 );
         """]     
     tables_books = [
         """   
                 create table books (
                 book_id integer primary key autoincrement,
-                name_book text,
-                episode_num text,
-                img_book blob,
-                text_book text,
-                date_add text,
-                price_book text
+                name_book text NOT NULL,
+                episode_num text NOT NULL,
+                img_book blob NOT NULL,
+                text_book text NOT NULL,
+                date_add text NOT NULL,
+                price_book text NOT NULL
                 );
         """] 
     tables_purchases_books = [
         """
                 create table purchases_books (
                 purchase_id integer primary key autoincrement,
-                id_tg int,
-                id_book int,
-                datatime_purchase text,
+                id_tg int NOT NULL,
+                id_book int NOT NULL,
+                datatime_purchase text NOT NULL,
                 foreign key (id_tg) references users (tg_id)
                 foreign key (id_book) references books (book_id)
                 );
@@ -41,9 +42,9 @@ def create_tables():
         """
                 create table bookmarks (
                 bookmark_id integer primary key autoincrement,
-                id_tg int,
-                id_book int,
-                position text,
+                id_tg int NOT NULL,
+                id_book int NOT NULL,
+                position text NOT NULL,
                 foreign key (id_tg) references users (tg_id)
                 foreign key (id_book) references books (book_id)
                 );
@@ -52,9 +53,9 @@ def create_tables():
         """
                 create table last_open (
                 last_open_id integer primary key autoincrement,
-                id_tg int,
-                id_book int,
-                last_open_book text,
+                id_tg int NOT NULL,
+                id_book int NOT NULL,
+                last_open_book text NOT NULL,
                 foreign key (id_tg) references users (tg_id)
                 foreign key (id_book) references books (book_id)
                 );

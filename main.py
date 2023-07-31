@@ -2,9 +2,33 @@ from flask import Flask, jsonify, redirect, request
 from db_check import create_tables
 from router.router_user import app_user
 import logging
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token
+import controller.controller_users as controller_users
+
 ###################### Запуск API ######################
 app = Flask(__name__)
 app.register_blueprint(app_user)
+app.config['JWT_SECRET_KEY'] = 'PpUM?vFJnErhg(#L{h4j2pfNEj=U=X]$–S%DOM9/qP{Hkb(iVv273OQWLdt+=H~_'
+jwt = JWTManager(app)
+
+############### Приветственное сообщение ###############
+@app.route('/', methods=['GET'])
+@jwt_required()
+def index():
+    return jsonify(message="Hello Flask!")
+
+@app.route('/login', methods=['POST'])
+def login():
+    if request.is_json:
+        tg_id = request.json['tg_id']
+        tg_num_phone = request.json['tg_num_phone']
+    result = controller_users.get_users_login(tg_id, tg_num_phone)
+    print (result)
+    if result:
+        access_token = create_access_token(identity=tg_id)
+        return jsonify(message='Login Successful', access_token=access_token)
+    else:
+        return jsonify('Bad data'), 401
 
 ############ CORS ###########
 # Access-Control-Allow-Origin указывает домен, из которого будут разрешены запросы. 

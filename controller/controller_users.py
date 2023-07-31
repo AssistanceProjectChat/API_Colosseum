@@ -7,7 +7,7 @@ def get_all_users():
     db = get_db()
     db.row_factory = sqlite3.Row
     cursor = db.cursor()
-    query = "select tg_id, tg_num_phone, tg_nick from users"
+    query = "select tg_id, tg_num_phone, tg_nick, tg_chat_id from users"
     row = cursor.execute(query).fetchall()
     # тут один цикл вложен в другой, первый цикл проходится по наименованиям столбцов
     # а второй сопоставляет значения с этими столбцами
@@ -20,21 +20,34 @@ def get_users(tg_id):
     db.row_factory = sqlite3.Row
     cursor = db.cursor()
     params = (tg_id)
-    cursor.execute("select tg_id, tg_num_phone, tg_nick from users where tg_id = ?", (params,))
+    cursor.execute("select tg_id, tg_num_phone, tg_nick, tg_chat_id from users where tg_id = ?", (params,))
     row = cursor.fetchone()
     desc = list(zip(*cursor.description))[0]
     if row is not None:
         rowdict = dict(zip(desc,row))
         return jsonify(rowdict)
-    
+
+############## Поиск пользователя для логина ##############
+def get_users_login(tg_id, tg_num_phone):
+    db = get_db()
+    db.row_factory = sqlite3.Row
+    cursor = db.cursor()
+    params = (tg_id, tg_num_phone)
+    cursor.execute("select tg_id, tg_num_phone from users where tg_id = ? and tg_num_phone = ?", params)
+    row = cursor.fetchone()
+    desc = list(zip(*cursor.description))[0]
+    if row is not None:
+        rowdict = dict(zip(desc,row))
+        return jsonify(rowdict)
+
 ############## Добавление новых пользователей ##############
-def insert_users(tg_id, tg_num_phone, tg_nick):
+def insert_users(tg_id, tg_num_phone, tg_nick, tg_chat_id):
     db = get_db()
     cursor = db.cursor()
     db.row_factory = sqlite3.Row
-    params = (tg_id, tg_num_phone, tg_nick)
+    params = (tg_id, tg_num_phone, tg_nick, tg_chat_id)
     try:
-        cursor.execute("insert into users (tg_id, tg_num_phone, tg_nick) values (?, ?, ?)", params)
+        cursor.execute("insert into users (tg_id, tg_num_phone, tg_nick, tg_chat_id) values (?, ?, ?, ?)", params)
     except Exception:
         print("Ошибка при добавлении пользователя!!!")
         return False
