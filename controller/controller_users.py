@@ -49,7 +49,7 @@ def insert_users(tg_id, tg_num_phone, tg_nick, tg_chat_id):
     try:
         cursor.execute("insert into users (tg_id, tg_num_phone, tg_nick, tg_chat_id) values (?, ?, ?, ?)", params)
     except Exception:
-        print("Ошибка при добавлении пользователя!!!")
+        print("Ошибка при добавлении пользователя.")
         return False
     db.commit()
     return True
@@ -67,7 +67,7 @@ def update_users(tg_id, tg_num_phone):
         row_s2 = row_s1.replace(",)",'')
         int_row = int(row_s2)
         if int_row != 1:
-            print("Ошибка при обновление номера телефона пользователя!!!")
+            print("Ошибка при обновление номера телефона пользователя.")
             print('1',int_row)
             return int_row
         else:

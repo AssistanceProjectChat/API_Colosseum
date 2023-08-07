@@ -2,16 +2,16 @@ from flask import Blueprint, redirect, request
 import controller.controller_users as controller_users
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 
-app_user = Blueprint('route', __name__)
+app_user = Blueprint('route_user', __name__)
 
 @app_user.route("/users", methods = ["GET"])
-@jwt_required()
+#@jwt_required()
 def get_all_users_by_id():
     all_users = controller_users.get_all_users()
     return all_users
 
 @app_user.route("/users/<tg_id>", methods = ["GET"])
-@jwt_required()
+#@jwt_required()
 def get_user_by_id(tg_id):
     user = controller_users.get_users(tg_id)
     if user is not None:
@@ -20,7 +20,6 @@ def get_user_by_id(tg_id):
         return redirect("Not Found"), 404
 
 @app_user.route("/users", methods = ["POST"])
-@jwt_required()
 def insert_user():
     try:
         tg_user = request.get_json()
@@ -37,7 +36,7 @@ def insert_user():
         return "Ошибка при добавлении пользователя."
 
 @app_user.route("/users", methods = ["PUT"])
-@jwt_required()
+#@jwt_required()
 def update_users():
     try:
         tg_user = request.get_json()
