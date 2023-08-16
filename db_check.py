@@ -12,7 +12,8 @@ def create_tables():
                 tg_id text unique NOT NULL,
                 tg_num_phone text unique NOT NULL,
                 tg_nick text,
-                tg_chat_id TEXT UNIQUE NOT NULL
+                tg_chat_id TEXT UNIQUE NOT NULL,
+                note TEXT
                 );
         """]     
     tables_books = [

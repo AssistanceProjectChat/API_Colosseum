@@ -18,6 +18,7 @@ app.register_blueprint(app_bookmarks)
 app.register_blueprint(app_purchase_books)
 app.register_blueprint(app_last_open)
 app.config['JWT_SECRET_KEY'] = 'PpUM?vFJnErhg(#L{h4j2pfNEj=U=X]$–S%DOM9/qP{Hkb(iVv273OQWLdt+=H~_'
+app.config["JWT_ALGORITHM"] = 'HS256'
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=10)
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 jwt = JWTManager(app)
@@ -25,11 +26,11 @@ jwt = JWTManager(app)
 ############### Приветственное сообщение ###############
 @app.route('/', methods=['GET'])
 @jwt_required()
-def index():
+async def index():
     return jsonify(message="Successful login")
 
 @app.route('/login_user', methods=['POST'])
-def login_user():
+async def login_user():
     if request.is_json:
         tg_id = request.json['tg_id']
         tg_num_phone = request.json['tg_num_phone']
@@ -43,22 +44,25 @@ def login_user():
         return jsonify('Bad data'), 401
     
 @app.route('/login_bot', methods=['POST'])
-def login_bot():
-    if request.is_json:
-        tg_id = request.json['tg_id']
-        tg_num_phone = request.json['tg_num_phone']
-    result = controller_users.get_users_login(tg_id, tg_num_phone)
-    print (result)
-    if result:
-        access_token = create_access_token(identity=tg_id)
-        refresh_token = create_refresh_token(identity=tg_id)
-        return jsonify(message='Bot Successful', access_token=access_token, refresh_token=refresh_token)
-    else:
+async def login_bot():
+    try:
+        if request.is_json:
+            tg_id = request.json['tg_id']
+            note = request.json['note']
+        result = controller_users.get_bot_login(tg_id, note)
+        print (result)
+        if result:
+            access_token = create_access_token(identity=tg_id)
+            refresh_token = create_refresh_token(identity=tg_id)
+            return jsonify(message='Bot Successful', access_token=access_token, refresh_token=refresh_token)
+        else:
+            return jsonify('Bad data'), 401
+    except Exception:
         return jsonify('Bad data'), 401
     
 @app.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)
-def refresh():
+async def refresh():
     identity = get_jwt_identity()
     access_token = create_access_token(identity=identity)
     return jsonify(access_token=access_token)
@@ -70,7 +74,7 @@ def refresh():
 # Наконец, Access-Control-Allow-Headers указывает, какие заголовки будут приняты для CORS.
 
 @app.after_request
-def after_request(respoinse):
+async def after_request(respoinse):
     respoinse.headers["Access-Control-Allow-Origin"] = "*"
     respoinse.headers["Access-Control-Allow-Credentials"] = "true"
     respoinse.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, PUT, DELETE"

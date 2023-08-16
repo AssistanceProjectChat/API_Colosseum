@@ -3,7 +3,7 @@ from flask import jsonify
 import sqlite3
 
 ############## Поиск всех пользователей ##############
-def get_all_users():
+async def get_all_users():
     db = get_db()
     db.row_factory = sqlite3.Row
     cursor = db.cursor()
@@ -40,6 +40,21 @@ def get_users_login(tg_id, tg_num_phone):
         rowdict = dict(zip(desc,row))
         return jsonify(rowdict)
 
+############## Поиск бота для логина ##############
+def get_bot_login(tg_id, note):
+    db = get_db()
+    db.row_factory = sqlite3.Row
+    cursor = db.cursor()
+    params = (tg_id, note)
+    print('checkpoint','1', params)
+    cursor.execute("select tg_id, note from users where tg_id = ? and note = ?", params)
+    row = cursor.fetchone()
+    desc = list(zip(*cursor.description))[0]
+    if row is not None:
+        rowdict = dict(zip(desc,row))
+        print(rowdict)
+        return jsonify(rowdict)
+    
 ############## Добавление новых пользователей ##############
 def insert_users(tg_id, tg_num_phone, tg_nick, tg_chat_id):
     db = get_db()
