@@ -22,7 +22,7 @@ def create_tables():
                 book_id integer primary key autoincrement,
                 name_book text NOT NULL unique,
                 episode_num text NOT NULL,
-                img_book blob NOT NULL,
+                img_book text NOT NULL,
                 text_book text NOT NULL,
                 date_add text NOT NULL,
                 price_book text NOT NULL

@@ -21,6 +21,8 @@ app.config['JWT_SECRET_KEY'] = 'PpUM?vFJnErhg(#L{h4j2pfNEj=U=X]$–S%DOM9/qP{Hkb
 app.config["JWT_ALGORITHM"] = 'HS256'
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=10)
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
+UPLOAD_FOLDER = "img"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 jwt = JWTManager(app)
 
 ############### Приветственное сообщение ###############

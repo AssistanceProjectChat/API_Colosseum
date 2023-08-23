@@ -25,7 +25,7 @@ def get_book(book_id):
     desc = list(zip(*cursor.description))[0]
     if row is not None:
         rowdict = dict(zip(desc,row))
-        return jsonify(str(rowdict))
+        return jsonify(rowdict)
 
 ############## Добавление новых книг ##############
 def insert_book(name_book, episode_num, img_book, text_book, date_add, price_book):

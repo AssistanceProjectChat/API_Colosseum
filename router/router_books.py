@@ -1,8 +1,15 @@
-from flask import Blueprint, redirect, request
+from flask import Blueprint, redirect, request, render_template, send_from_directory, url_for
 from flask_jwt_extended import jwt_required
 import controller.controller_books as controller_books
+import string
+import os
+from werkzeug.utils import secure_filename
+
 
 app_book= Blueprint('route_book', __name__)
+
+if not os.path.isdir("img"):
+            os.mkdir("img")
 
 @app_book.route("/books", methods = ["GET"])
 #@jwt_required()
@@ -22,11 +29,13 @@ def get_book_by_id(book_id):
 @app_book.route("/books", methods = ["POST"])
 #@jwt_required()
 def insert_book():
-    try:
+    import main
+    try:             
         book = request.get_json()
         name_book = book["name_book"]
         episode_num = book["episode_num"]
-        img_book = book["img_book"]
+        img_name = str(name_book).translate({ord(c): None for c in string.whitespace})
+        img_book = img_name
         text_book = book["text_book"]
         date_add = book["date_add"]
         price_book = book["price_book"]
@@ -35,8 +44,31 @@ def insert_book():
             return "Книга успешно добавлена."
         else:
             return "Ошибка при добавлении книги."
-    except Exception:
+    except Exception as e:
         return "Ошибка при добавлении книги."
+    
+@app_book.route("/books/uploads", methods = ["POST","GET"])
+def upload_img():
+    if request.method == "POST":
+        try:
+            import main
+            name_book = request.args.get('name_book', default=None,type=str)
+            img_name = str(name_book).translate({ord(c): None for c in string.whitespace})
+            file = request.files['file']           
+            filename = secure_filename(file.filename)
+            if filename.find(".jpg") != -1:
+                filename_jpg = img_name + '.jpg'
+                file.save(os.path.join(main.app.config['UPLOAD_FOLDER'], filename_jpg))
+                return "File upload"
+            else:
+                return "The file must have the only JPG extension"
+        except Exception:
+            return "File error"
+
+@app_book.route("/books/uploads/<name>")
+def display_img(name):
+    import main
+    return send_from_directory(main.app.config["UPLOAD_FOLDER"], name)
 
 @app_book.route("/books", methods = ["PUT"])
 #@jwt_required()
