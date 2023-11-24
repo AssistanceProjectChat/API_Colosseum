@@ -35,11 +35,16 @@ def insert_book():
         name_book = book["name_book"]
         episode_num = book["episode_num"]
         img_name = str(name_book).translate({ord(c): None for c in string.whitespace})
-        img_book = img_name
+        img_book = f'https://colosseum.rayaeron-server.ru:7061/books/uploads/{img_name}.jpg'
         text_book = book["text_book"]
         date_add = book["date_add"]
         price_book = book["price_book"]
-        result = controller_books.insert_book(name_book, episode_num, img_book, text_book, date_add, price_book)
+        color = book["color"]
+        if color.startswith('#'):
+            result = controller_books.insert_book(name_book, episode_num, img_book, text_book, date_add, price_book, color)
+        else:
+            return "Цвет должен начинаться с символа # (формат HEX)"
+        
         if result == True:
             return "Книга успешно добавлена."
         else:
@@ -77,12 +82,14 @@ def update_book():
         book = request.get_json()
         book_id = book["book_id"]
         name_book = book["name_book"]
+        img_name = str(name_book).translate({ord(c): None for c in string.whitespace})
+        img_book = img_name
         episode_num = book["episode_num"]
-        img_book = book["img_book"]
         text_book = book["text_book"]
         date_add = book["date_add"]
         price_book = book["price_book"]
-        result = controller_books.update_book(book_id, name_book, episode_num, img_book, text_book, date_add, price_book)
+        color = book["color"]
+        result = controller_books.update_book(book_id, name_book, episode_num, img_book, text_book, date_add, price_book, color)
         print(result)
         if result == 2:
             return "Книга успешно обновлена."

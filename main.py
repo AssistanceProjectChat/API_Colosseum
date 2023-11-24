@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, redirect, request
+from flask import Blueprint, Flask, jsonify, redirect, request
 from datetime import timedelta
 from db_check import create_tables
 from router.router_user import app_user
@@ -6,6 +6,7 @@ from router.router_books import app_book
 from router.router_bookmarks import app_bookmarks
 from router.router_purchase_books import app_purchase_books
 from router.router_last_open import app_last_open
+import ssl
 import logging
 from flask_jwt_extended import JWTManager, get_jwt_identity, jwt_required, create_access_token, create_refresh_token
 import controller.controller_users as controller_users
@@ -86,4 +87,5 @@ async def after_request(respoinse):
 if __name__ == "__main__":
     create_tables()
     #logging.basicConfig(filename='api_book.log', encoding='utf-8', level=logging.INFO)
-    app.run(host='192.168.146.186', port=7061, debug=True)
+    context = ('cert.pem', 'key.pem')
+    app.run(host='192.168.146.186', port=7061, debug=True, ssl_context=context)

@@ -1,13 +1,15 @@
+import string
 from db_check import get_db
 from flask import jsonify
 import sqlite3
+import os
 
 ############## Поиск всех книг ##############
 def get_all_books():
     db = get_db()
     db.row_factory = sqlite3.Row
     cursor = db.cursor()
-    query = "select book_id, name_book, episode_num, text_book, date_add, price_book from books"
+    query = "select * from books"
     row = cursor.execute(query).fetchall()
     # тут один цикл вложен в другой, первый цикл проходится по наименованиям столбцов
     # а второй сопоставляет значения с этими столбцами
@@ -28,13 +30,13 @@ def get_book(book_id):
         return jsonify(rowdict)
 
 ############## Добавление новых книг ##############
-def insert_book(name_book, episode_num, img_book, text_book, date_add, price_book):
+def insert_book(name_book, episode_num, img_book, text_book, date_add, price_book, color):
     db = get_db()
     cursor = db.cursor()
     db.row_factory = sqlite3.Row
-    params = (name_book, episode_num, img_book, text_book, date_add, price_book)
+    params = (name_book, episode_num, img_book, text_book, date_add, price_book, color)
     try:
-        cursor.execute("insert into books (name_book, episode_num, img_book, text_book, date_add, price_book) values (?, ?, ?, ?, ?, ?)", params)
+        cursor.execute("insert into books (name_book, episode_num, img_book, text_book, date_add, price_book, color) values (?, ?, ?, ?, ?, ?, ?)", params)
     except Exception:
         print("Ошибка при добавлении книги.")
         return False
@@ -42,12 +44,16 @@ def insert_book(name_book, episode_num, img_book, text_book, date_add, price_boo
     return True
 
 ############## Обновление параметров книги у существующих книг ##############
-def update_book(book_id, name_book, episode_num, img_book, text_book, date_add, price_book):
+def update_book(book_id, name_book, episode_num, img_book, text_book, date_add, price_book, color):
     db = get_db()
     cursor = db.cursor()
     db.row_factory = sqlite3.Row
-    params = (name_book, episode_num, img_book, text_book, date_add, price_book, book_id)
+    params = (name_book, episode_num, img_book, text_book, date_add, price_book, book_id, color)
     params_check = (book_id)
+    img_n = cursor.execute("select img_book from books where book_id = ?", (params_check,))
+    for row_i in img_n:
+                row_i1 = str(row_i).replace("('",'')
+                row_i2 = row_i1.replace("',)",'')
     res = cursor.execute("select count(book_id) from books where book_id = ?", (params_check,))
     print(res)
     for row in res:
@@ -60,9 +66,15 @@ def update_book(book_id, name_book, episode_num, img_book, text_book, date_add, 
             print('checkpoint2',int_rows)
             return 1
         else:
-            cursor.execute("update books set name_book = ?, episode_num =?, img_book = ?, text_book = ?, date_add = ?, price_book = ? where book_id = ?", params)
+            print(row_i2)
+            filename = f'img/{row_i2}.jpg'
+            file_rename = 'img/' + img_book + '.jpg'
+            print(filename)
+            if os.path.exists(filename):
+                os.rename(filename, file_rename)
+            cursor.execute("update books set name_book = ?, episode_num =?, img_book = ?, text_book = ?, date_add = ?, price_book = ?, color = ?  where book_id = ?", params)
             db.commit()
-            print('checkpoint3',int_rows)
+            print('checkpoint3',int_rows)       
             return 2
 
 ############## Удаление книги ##############
