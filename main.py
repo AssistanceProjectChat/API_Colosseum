@@ -6,7 +6,7 @@ from router.router_books import app_book
 from router.router_bookmarks import app_bookmarks
 from router.router_purchase_books import app_purchase_books
 from router.router_last_open import app_last_open
-import ssl
+from router.router_cart import app_cart
 import logging
 from flask_jwt_extended import JWTManager, get_jwt_identity, jwt_required, create_access_token, create_refresh_token
 import controller.controller_users as controller_users
@@ -18,6 +18,7 @@ app.register_blueprint(app_book)
 app.register_blueprint(app_bookmarks)
 app.register_blueprint(app_purchase_books)
 app.register_blueprint(app_last_open)
+app.register_blueprint(app_cart)
 app.config['JWT_SECRET_KEY'] = 'PpUM?vFJnErhg(#L{h4j2pfNEj=U=X]$–S%DOM9/qP{Hkb(iVv273OQWLdt+=H~_'
 app.config["JWT_ALGORITHM"] = 'HS256'
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=10)
