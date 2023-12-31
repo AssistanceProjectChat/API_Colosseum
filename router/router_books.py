@@ -29,7 +29,6 @@ def get_book_by_id(book_id):
 @app_book.route("/books", methods = ["POST"])
 #@jwt_required()
 def insert_book():
-    import main
     try:             
         book = request.get_json()
         name_book = book["name_book"]

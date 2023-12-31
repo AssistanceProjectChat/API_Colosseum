@@ -58,7 +58,7 @@ def update_bookmarks(id_book, id_tg, position):
             print('checkpoint2',int_rows)
             return 1
         else:
-            cursor.execute("update bookmarks set id_tg = ?, position =? where id_book = ?", params)
+            cursor.execute("update bookmarks set position =? where id_book = ?, id_tg = ?", params)
             db.commit()
             print('checkpoint3',int_rows)
             return 2
